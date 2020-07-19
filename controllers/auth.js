@@ -36,7 +36,9 @@ exports.login = asyncHandler(async (req, res, next) => {
 });
 
 exports.getMe = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.user._id);
+  // const user = await User.findById(req.user.id);
+  // console.log(user.id);
+  const user = req.user;
   res.status(200).json({ success: true, data: user });
 });
 

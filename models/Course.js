@@ -36,6 +36,11 @@ const CourseSchema = mongoose.Schema({
     ref: 'Bootcamp',
     required: [true, 'Please add a bootcamp to the course'],
   },
+  user: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User',
+    required: [true, 'Please add a user to the course'],
+  },
 });
 
 //Static method to calculate the average cost of courses

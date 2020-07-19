@@ -32,6 +32,17 @@ exports.getBootcamp = asyncHandler(async (req, res, next) => {
 //@route    POST /api/v1/bootcamps/
 //@access   Private
 exports.createBootcamp = asyncHandler(async (req, res, next) => {
+  req.body.user = req.user._id;
+  const publishedBootcamp = Bootcamp.findOne({ user: req.user._id });
+  if (publishedBootcamp && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(
+        `You already have a published bootcamp: ${req.user._id}`,
+        403
+      )
+    );
+  }
+  // Now allow to create a bootcamp
   const bootcamp = await Bootcamp.create(req.body);
   res.status(200).json({ success: true, data: bootcamp });
 });
@@ -49,6 +60,13 @@ exports.updateBootcamp = asyncHandler(async (req, res, next) => {
       )
     );
   }
+
+  if (bootcamp.user.toString() !== req.user._id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse('You are not authorized to perform this action', 403)
+    );
+  }
+  // Now Update the bootcamp
   bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
@@ -69,6 +87,13 @@ exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
       )
     );
   }
+  // Checking if the user or admin or the user is the owner
+  if (bootcamp.user.toString() !== req.user._id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse('You are not authorized to perform this action', 403)
+    );
+  }
+  // Now delete the bootcamp
   bootcamp.remove();
   res.status(200).json({ success: true, data: {} });
 });
@@ -108,6 +133,13 @@ exports.bootcampPhotoUpload = asyncHandler(async (req, res, next) => {
         `Bootcamp not found with the id of ${req.params.id}`,
         404
       )
+    );
+  }
+
+  // Checking if the user or admin or the user is the owner
+  if (bootcamp.user.toString() !== req.user._id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse('You are not authorized to perform this action', 403)
     );
   }
 

@@ -56,8 +56,21 @@ exports.addCourse = asyncHandler(async (req, res, next) => {
       )
     );
   }
+
+  // Checking if the user or admin or the user is the owner
+  if (bootcamp.user.toString() !== req.user._id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(
+        'You are not authorized to add a course to the bootcamp',
+        403
+      )
+    );
+  }
+  // Adding the logged in user to the course
+  req.body.user = req.user._id;
+
   const course = await Course.create(req.body);
-  console.log(req.body);
+  // console.log(req.body);
   res.status(200).json({ success: true, data: course });
 });
 // @desc      Update course
@@ -70,6 +83,13 @@ exports.updateCourse = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Course not found with the id of ${req.params.id}`, 404)
     );
   }
+  // Check if the user is course owner or admin
+  if (course.user.toString() !== req.user._id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse('You are not authorized to update this course', 403)
+    );
+  }
+
   course = await Course.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
@@ -87,6 +107,13 @@ exports.deleteCourse = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Course not found with the id of ${req.params.id}`, 404)
     );
   }
-  await Course.findByIdAndDelete(req.params.id);
+  // Check if the user is course owner or admin
+  if (course.user.toString() !== req.user._id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse('You are not authorized to delete this course', 403)
+    );
+  }
+  // await Course.findByIdAndDelete(req.params.id);
+  await course.remove(); // Another way to delete a course. But only works on instance though
   res.status(200).json({ success: true, data: {} });
 });
