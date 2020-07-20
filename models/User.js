@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 const UserSchema = mongoose.Schema({
   name: {
@@ -35,6 +36,12 @@ const UserSchema = mongoose.Schema({
 });
 
 UserSchema.pre('save', async function (next) {
+  // For Password reset: because we are not validating before saving at the time of saving resetToken
+  // If password is not modified then jump to the  next middleware
+  if (!isModified('password')) {
+    next();
+  }
+
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
   next();
@@ -48,6 +55,19 @@ UserSchema.methods.getSignedJwtToken = function () {
 
 UserSchema.methods.matchPassword = async function (userEnteredPassword) {
   return await bcrypt.compare(userEnteredPassword, this.password);
+};
+
+//Generate annd hash password token
+UserSchema.methods.getResetPasswordToken = function () {
+  // Generate the token
+  const resetToken = crypto.randomBytes(20).toString('hex');
+  // Hash token and set the field
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+  this.passwordResetTokenExpiresIn = Date.now() + 10 * 60 * 1000;
+  return resetToken;
 };
 
 module.exports = mongoose.model('User', UserSchema);
