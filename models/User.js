@@ -38,7 +38,7 @@ const UserSchema = mongoose.Schema({
 UserSchema.pre('save', async function (next) {
   // For Password reset: because we are not validating before saving at the time of saving resetToken
   // If password is not modified then jump to the  next middleware
-  if (!isModified('password')) {
+  if (!this.isModified('password')) {
     next();
   }
 
