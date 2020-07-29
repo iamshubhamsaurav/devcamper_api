@@ -44,6 +44,7 @@ UserSchema.pre('save', async function (next) {
 
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
+  next();
 });
 
 UserSchema.methods.getSignedJwtToken = function () {
@@ -53,7 +54,6 @@ UserSchema.methods.getSignedJwtToken = function () {
 };
 
 UserSchema.methods.matchPassword = async function (enteredPassword) {
-  console.log('matchPassword running');
   return await bcrypt.compare(enteredPassword, this.password);
 };
 

@@ -19,7 +19,7 @@ exports.login = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse('Please provide credientals', 400));
   }
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).select('+password');
 
   if (!user) {
     return next(new ErrorResponse('Invalid credientals', 401));
