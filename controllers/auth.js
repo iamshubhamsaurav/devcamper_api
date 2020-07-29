@@ -2,6 +2,7 @@ const User = require('../models/User');
 const asyncHandler = require('../utils/asyncHandler');
 const ErrorResponse = require('../utils/errorResponse');
 const sendEmail = require('../utils/sendEmail');
+const crypto = require('crypto');
 
 exports.register = asyncHandler(async (req, res, next) => {
   const { name, email, password, role } = req.body;
@@ -55,7 +56,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 
   const resetUrl = `${req.protocol}://${req.get(
     'host'
-  )}/api/v1/resetpassword/${resetToken}`;
+  )}/api/v1/auth/resetpassword/${resetToken}`;
 
   const message = `You can reset your password with this link. If you haven't requested for it then IGNORE. ${resetUrl}`;
 
@@ -76,6 +77,27 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 
   // console.log(resetToken);
   // res.status(200).json({ success: true, data: user });
+});
+
+exports.resetPassword = asyncHandler(async (req, res, next) => {
+  const passwordResetToken = crypto
+    .createHash('sha256')
+    .update(req.params.resettoken)
+    .digest('hex');
+
+  const user = await User.findOne({
+    passwordResetToken,
+    passwordResetTokenExpiresIn: { $gt: Date.now() },
+  });
+  if (!user) {
+    return next(new ErrorResponse('Invalid Token', 401));
+  }
+  user.password = req.body.password;
+  user.passwordResetToken = undefined;
+  user.passwordResetTokenExpiresIn = undefined;
+  await user.save();
+
+  sendTokenResponse(user, 200, res);
 });
 
 const sendTokenResponse = (user, statusCode, res) => {
