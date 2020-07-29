@@ -81,6 +81,20 @@ const showCourseData = async () => {
   }
 };
 
+const showUsers = async () => {
+  try {
+    const users = await User.find().select('+password');
+    console.log({
+      count: users.length,
+      data: users,
+    });
+    process.exit();
+  } catch (error) {
+    console.log('Cannopt display users from seeder'.red);
+    process.exit();
+  }
+};
+
 if (process.argv[2] === '-i') {
   importData();
 } else if (process.argv[2] === '-d') {
@@ -89,4 +103,6 @@ if (process.argv[2] === '-i') {
   showBootcampData();
 } else if (process.argv[2] === '-sc') {
   showCourseData();
+} else if (process.argv[2] === '-su') {
+  showUsers();
 }

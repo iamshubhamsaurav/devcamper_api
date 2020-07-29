@@ -30,7 +30,6 @@ exports.login = asyncHandler(async (req, res, next) => {
   if (!isMatch) {
     return next(new ErrorResponse('Invalid credientals', 401));
   }
-
   // const token = user.getSignedJwtToken();
   // res.status(200).json({ success: true, data: user, token });
   sendTokenResponse(user, 200, res);
@@ -75,8 +74,8 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse('Reset email could not be send', 500));
   }
 
-  console.log(resetToken);
-  res.status(200).json({ success: true, data: user });
+  // console.log(resetToken);
+  // res.status(200).json({ success: true, data: user });
 });
 
 const sendTokenResponse = (user, statusCode, res) => {
