@@ -100,6 +100,30 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
   sendTokenResponse(user, 200, res);
 });
 
+exports.updateDetails = asyncHandler(async (req, res, next) => {
+  const fieldsToUpdate = {
+    name: req.body.name,
+    email: req.body.email,
+  };
+
+  const user = await User.findByIdAndUpdate(req.user._id, fieldsToUpdate, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({ success: true, data: user });
+});
+
+exports.updatePassword = asyncHandler(async (req, res, next) => {
+  const user = User.findById(req.user._id).select('+password');
+  if (!(await user.matchPassword(req.body.currentPassword))) {
+    return next(new ErrorResponse('Invalid Password', 401));
+  }
+  user.password = req.body.newPassword;
+  await user.save();
+  sendTokenResponse(user, 200, res);
+});
+
 const sendTokenResponse = (user, statusCode, res) => {
   const token = user.getSignedJwtToken();
 
