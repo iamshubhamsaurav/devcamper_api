@@ -115,7 +115,7 @@ exports.updateDetails = asyncHandler(async (req, res, next) => {
 });
 
 exports.updatePassword = asyncHandler(async (req, res, next) => {
-  const user = User.findById(req.user._id).select('+password');
+  const user = await User.findById(req.user._id).select('+password');
   if (!(await user.matchPassword(req.body.currentPassword))) {
     return next(new ErrorResponse('Invalid Password', 401));
   }
