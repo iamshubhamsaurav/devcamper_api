@@ -15,8 +15,8 @@ const { protect, authorize } = require('../middleware/auth');
 
 const router = express.Router();
 
-router.route(protect);
-router.route(authorize('admin'));
+router.use(protect);
+router.use(authorize('admin'));
 
 router.route('/').get(advancedResults(User), getUsers).post(createUser);
 

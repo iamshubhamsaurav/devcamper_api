@@ -59,7 +59,7 @@ const advancedResults = (model, populate) => async (req, res, next) => {
   // const bootcamps = await Bootcamp.find();
   res.advancedResults = {
     success: true,
-    count: results.count,
+    count: results.length,
     pagination,
     data: results,
   };
