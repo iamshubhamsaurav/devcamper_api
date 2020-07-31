@@ -10,10 +10,15 @@ const {
 
 const User = require('../models/User');
 
+// Including Review Router
+const reviewRouter = require('./reviews');
+
 const advancedResults = require('../middleware/advancedResults');
 const { protect, authorize } = require('../middleware/auth');
 
 const router = express.Router();
+
+router.use('/:userId/reviews', reviewRouter);
 
 router.use(protect);
 router.use(authorize('admin'));
