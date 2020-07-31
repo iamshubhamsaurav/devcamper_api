@@ -1,7 +1,13 @@
 const express = require('express');
 const Review = require('../models/Review');
 
-const { getReviews } = require('../controllers/reviews');
+const {
+  getReviews,
+  getReview,
+  createReview,
+  updateReview,
+  deleteReview,
+} = require('../controllers/reviews');
 
 const router = express.Router();
 
@@ -17,6 +23,9 @@ router
       { path: 'bootcamp', select: 'name description' },
       getReviews
     )
-  );
+  )
+  .post(createReview);
+
+router.route('/:id').get(getReview).put(updateReview).delete(deleteReview);
 
 module.exports = router;
