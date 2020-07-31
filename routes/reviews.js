@@ -24,8 +24,12 @@ router
       getReviews
     )
   )
-  .post(createReview);
+  .post(protect, createReview);
 
-router.route('/:id').get(getReview).put(updateReview).delete(deleteReview);
+router
+  .route('/:id')
+  .get(getReview)
+  .put(protect, updateReview)
+  .delete(protect, deleteReview);
 
 module.exports = router;

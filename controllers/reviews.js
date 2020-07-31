@@ -51,13 +51,22 @@ exports.updateReview = asyncHandler(async (req, res, next) => {
   if (req.body.bootcamp || req.body.user) {
     return new ErrorResponse('bootcamp and user cannot be changed', 404);
   }
-  const review = await Review.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
+  let review = await Review.findById(req.params.id);
   if (!review) {
     return new ErrorResponse('Review not found', 404);
   }
+  if (
+    req.user._id.toString() !== review.user.toString() &&
+    req.user.role !== 'admin'
+  ) {
+    return next(
+      new ErrorResponse('You are not authorized to perform this action', 401)
+    );
+  }
+  review = await Review.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
   res.status(200).json({ success: true, data: review });
 });
 
@@ -65,10 +74,22 @@ exports.updateReview = asyncHandler(async (req, res, next) => {
 //@route    DELETE /api/v1/reviews/:id
 //@access   Private
 exports.deleteReview = asyncHandler(async (req, res, next) => {
-  const review = await Review.findByIdAndDelete(req.params.id);
+  const review = await Review.findById(req.params.id);
+
   if (!review) {
     return new ErrorResponse('Review not found', 404);
   }
-  review = undefined;
+
+  if (
+    req.user._id.toString() !== review.user.toString() &&
+    req.user.role !== 'admin'
+  ) {
+    return next(
+      new ErrorResponse('You are not authorized to perform this action', 401)
+    );
+  }
+
+  await review.remove();
+
   res.status(200).json({ success: true, data: {} });
 });
