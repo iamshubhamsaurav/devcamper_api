@@ -12,6 +12,11 @@ exports.getReviews = asyncHandler(async (req, res, next) => {
     res
       .status(200)
       .json({ success: true, count: review.length, data: reviews });
+  } else if (req.params.userId) {
+    const reviews = Review.find({ user: req.params.userId });
+    res
+      .status(200)
+      .json({ success: true, count: review.length, data: reviews });
   } else {
     res.status(200).json(res.advancedResults);
   }
