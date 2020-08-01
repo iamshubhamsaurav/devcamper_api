@@ -43,8 +43,18 @@ exports.getReview = asyncHandler(async (req, res, next) => {
 exports.createReview = asyncHandler(async (req, res, next) => {
   req.body.bootcamp = req.params.bootcampId;
   req.body.user = req.user._id;
+
+  const bootcamp = await Bootcamp.findById(req.params.bootcampId);
+
+  if (!bootcamp) {
+    return new ErrorResponse(
+      `Bootcamp not found with the Id of ${req.params.bootcampId}`,
+      404
+    );
+  }
+
   const review = await Review.create(req.body);
-  res.status(200).json({ success: true, data: review });
+  res.status(201).json({ success: true, data: review });
 });
 
 //@desc     Update a Review
