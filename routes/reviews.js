@@ -19,11 +19,8 @@ const router = express.Router({ mergeParams: true });
 router
   .route('/')
   .get(
-    advancedResults(
-      Review,
-      { path: 'bootcamp', select: 'name description' },
-      getReviews
-    )
+    advancedResults(Review, { path: 'bootcamp', select: 'name description' }),
+    getReviews
   )
   .post(protect, authorize('user', 'admin'), createReview);
 

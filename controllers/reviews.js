@@ -8,16 +8,17 @@ const ErrorResponse = require('../utils/errorResponse');
 //@route    POST /api/v1/user/:userId/reviews
 //@access   Public
 exports.getReviews = asyncHandler(async (req, res, next) => {
+  console.log('getReviews Called');
   if (req.params.bootcampId) {
     const reviews = await Review.find({ bootcamp: req.params.bootcampId });
     res
       .status(200)
-      .json({ success: true, count: review.length, data: reviews });
+      .json({ success: true, count: reviews.length, data: reviews });
   } else if (req.params.userId) {
     const reviews = await Review.find({ user: req.params.userId });
     res
       .status(200)
-      .json({ success: true, count: review.length, data: reviews });
+      .json({ success: true, count: reviews.length, data: reviews });
   } else {
     res.status(200).json(res.advancedResults);
   }
@@ -43,7 +44,7 @@ exports.getReview = asyncHandler(async (req, res, next) => {
 exports.createReview = asyncHandler(async (req, res, next) => {
   req.body.bootcamp = req.params.bootcampId;
   req.body.user = req.user._id;
-
+  console.log('ceeateReview Called');
   const bootcamp = await Bootcamp.findById(req.params.bootcampId);
 
   if (!bootcamp) {
