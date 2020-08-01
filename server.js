@@ -42,6 +42,12 @@ app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/users', usersRoute);
 app.use('/api/v1/reviews', reviewsRoute);
 
+app.use('*', (req, res, next) => {
+  res
+    .status(200)
+    .json({ success: false, message: `Route ${req.baseUrl} Does Not Exists` });
+});
+
 //ErrorHandler
 app.use(errorHandler);
 

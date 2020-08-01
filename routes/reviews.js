@@ -1,5 +1,4 @@
 const express = require('express');
-const Review = require('../models/Review');
 
 const {
   getReviews,
@@ -9,11 +8,13 @@ const {
   deleteReview,
 } = require('../controllers/reviews');
 
-const router = express.Router();
+const Review = require('../models/Review');
 
 //Middlewares
 const advancedResults = require('../middleware/advancedResults');
 const { protect, authorize } = require('../middleware/auth');
+
+const router = express.Router();
 
 router
   .route('/')
