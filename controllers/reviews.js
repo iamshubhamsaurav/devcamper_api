@@ -9,12 +9,12 @@ const ErrorResponse = require('../utils/errorResponse');
 //@access   Public
 exports.getReviews = asyncHandler(async (req, res, next) => {
   if (req.params.bootcampId) {
-    const reviews = Review.find({ bootcamp: req.params.bootcampId });
+    const reviews = await Review.find({ bootcamp: req.params.bootcampId });
     res
       .status(200)
       .json({ success: true, count: review.length, data: reviews });
   } else if (req.params.userId) {
-    const reviews = Review.find({ user: req.params.userId });
+    const reviews = await Review.find({ user: req.params.userId });
     res
       .status(200)
       .json({ success: true, count: review.length, data: reviews });
@@ -32,7 +32,7 @@ exports.getReview = asyncHandler(async (req, res, next) => {
     select: 'name description',
   });
   if (!review) {
-    return new ErrorResponse('Review not found', 404);
+    return next(new ErrorResponse('Review not found', 404));
   }
   res.status(200).json({ success: true, data: review });
 });
@@ -47,9 +47,11 @@ exports.createReview = asyncHandler(async (req, res, next) => {
   const bootcamp = await Bootcamp.findById(req.params.bootcampId);
 
   if (!bootcamp) {
-    return new ErrorResponse(
-      `Bootcamp not found with the Id of ${req.params.bootcampId}`,
-      404
+    return next(
+      new ErrorResponse(
+        `Bootcamp not found with the Id of ${req.params.bootcampId}`,
+        404
+      )
     );
   }
 
@@ -62,11 +64,11 @@ exports.createReview = asyncHandler(async (req, res, next) => {
 //@access   Private
 exports.updateReview = asyncHandler(async (req, res, next) => {
   if (req.body.bootcamp || req.body.user) {
-    return new ErrorResponse('bootcamp and user cannot be changed', 404);
+    return next(new ErrorResponse('bootcamp and user cannot be changed', 404));
   }
   let review = await Review.findById(req.params.id);
   if (!review) {
-    return new ErrorResponse('Review not found', 404);
+    return next(new ErrorResponse('Review not found', 404));
   }
   if (
     req.user._id.toString() !== review.user.toString() &&
@@ -90,7 +92,7 @@ exports.deleteReview = asyncHandler(async (req, res, next) => {
   const review = await Review.findById(req.params.id);
 
   if (!review) {
-    return new ErrorResponse('Review not found', 404);
+    return next(new ErrorResponse('Review not found', 404));
   }
 
   if (
