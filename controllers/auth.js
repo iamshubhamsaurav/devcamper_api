@@ -43,6 +43,14 @@ exports.getMe = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: user });
 });
 
+exports.logout = asyncHandler(async (req, res, next) => {
+  res.cookie('token', 'none', {
+    expires: new Date.now() + 1000,
+    httpOnly: true,
+  });
+  res.status(200).json({ success: true, data: {} });
+});
+
 exports.forgotPassword = asyncHandler(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
