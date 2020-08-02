@@ -10,6 +10,7 @@ const errorHandler = require('./middleware/errorHandler');
 
 //Security Modules
 const mongoSanitize = require('express-mongo-sanitize');
+const helmet = require('helmet');
 
 dotenv.config({ path: './config/config.env' });
 connectDB();
@@ -37,6 +38,8 @@ app.use(fileUpload());
 
 //Sanitize data
 app.use(mongoSanitize());
+//Set Security headers
+app.use(helmet());
 
 //Static Files
 // app.use(express.static('./public'));

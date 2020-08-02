@@ -19,6 +19,7 @@
     "express-fileupload": "^1.1.7-alpha.3",
     "express-mongo-sanitize": "^2.0.0",
     "geo-coder": "^1.0.2",
+    "helmet": "^3.23.3",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.10",
     "morgan": "^1.10.0",
