@@ -8,6 +8,9 @@ const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 
+//Security Modules
+const mongoSanitize = require('express-mongo-sanitize');
+
 dotenv.config({ path: './config/config.env' });
 connectDB();
 
@@ -29,6 +32,11 @@ if (process.env.NODE_ENV === 'development') {
 
 //File Upload Middleware
 app.use(fileUpload());
+
+// Security Middlewares
+
+//Sanitize data
+app.use(mongoSanitize());
 
 //Static Files
 // app.use(express.static('./public'));

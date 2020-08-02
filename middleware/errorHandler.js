@@ -10,7 +10,8 @@ const errorHandler = (err, req, res, next) => {
     error = new ErrorResponse(message, 404);
   }
   if (err.name === 'CastError') {
-    const message = `Resource not found with the ID of ${err.value}`;
+    // const message = `Resource not found with the ID of ${err.value}`;
+    const message = 'Resource not found';
     error = new ErrorResponse(message, 400);
   }
   if (err.name === 'ValidationError') {
