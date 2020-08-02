@@ -14,6 +14,7 @@ const helmet = require('helmet');
 const xssClean = require('xss-clean');
 const rateLimiter = require('express-rate-limit');
 const hpp = require('hpp');
+const cors = require('cors');
 
 dotenv.config({ path: './config/config.env' });
 connectDB();
@@ -37,8 +38,7 @@ if (process.env.NODE_ENV === 'development') {
 //File Upload Middleware
 app.use(fileUpload());
 
-// Security Middlewares
-
+// ****** Security Middlewares ********
 //Sanitize data
 app.use(mongoSanitize());
 //Set Security headers
@@ -54,6 +54,8 @@ app.use(
 );
 // Prevent Http params pollution
 app.use(hpp());
+// Enable Cross Site Resource Sharing
+app.use(cors());
 
 //Static Files
 // app.use(express.static('./public'));
