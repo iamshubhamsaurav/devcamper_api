@@ -13,6 +13,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
 const xssClean = require('xss-clean');
 const rateLimiter = require('express-rate-limit');
+const hpp = require('hpp');
 
 dotenv.config({ path: './config/config.env' });
 connectDB();
@@ -51,6 +52,8 @@ app.use(
     max: 100, //  Max 100 request in the set duration
   })
 );
+// Prevent Http params pollution
+app.use(hpp());
 
 //Static Files
 // app.use(express.static('./public'));
