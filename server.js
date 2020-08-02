@@ -12,6 +12,7 @@ const errorHandler = require('./middleware/errorHandler');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
 const xssClean = require('xss-clean');
+const rateLimiter = require('express-rate-limit');
 
 dotenv.config({ path: './config/config.env' });
 connectDB();
@@ -43,6 +44,13 @@ app.use(mongoSanitize());
 app.use(helmet());
 //Prevent XSS - Cross site scripting attack
 app.use(xssClean());
+// Limiting requests
+app.use(
+  rateLimiter({
+    windowMs: 10 * 60 * 1000, // 10 minutes
+    max: 100, //  Max 100 request in the set duration
+  })
+);
 
 //Static Files
 // app.use(express.static('./public'));
